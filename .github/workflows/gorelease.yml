@@ -1,35 +1,45 @@
-# .github/workflows/release.yml
 name: goreleaser
 
 on:
-  pull_request:
   push:
     # run only against tags
     tags:
       - "*"
 
+# You might not need all of this...
 permissions:
   contents: write
-  # packages: write
-  # issues: write
-  # id-token: write
+  packages: write
+  issues: write
+  id-token: write
 
 jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Set up Go
-        uses: actions/setup-go@v5
+
+      # we'll need this for both 'zig build' and 'cargo zigbuild'
+      - uses: mlugg/setup-zig@v1
+
+      # only needed if using signing
+      - uses: sigstore/cosign-installer@v3.7.0
+
+      # only needed if using SBOMs
+      - uses: anchore/sbom-action/download-syft@v0.17.9
+
+      # only needed if using docker
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
         with:
-          go-version: stable
-      # More assembly might be required: Docker logins, GPG, etc.
-      # It all depends on your needs.
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v6
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: goreleaser/goreleaser-action@v6
         with:
           # either 'goreleaser' (default) or 'goreleaser-pro'
           distribution: goreleaser
@@ -38,5 +48,8 @@ jobs:
           args: release --clean
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
+          # used to push the homebrew tap
+          GH_PAT: ${{ secrets.GH_PAT }}
+          # Your GoReleaser Pro key.
+          # Only needed if you're using the 'goreleaser-pro' distribution.
           # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
