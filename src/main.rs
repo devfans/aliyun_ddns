@@ -75,7 +75,7 @@ async fn main() {
 async fn add_subdomain(domain_name: &str, sub_domain: &str, record_type: &str, record_value: &str) {
     match dns.add_domain_record(domain_name, sub_domain, record_type, record_value).await {
         Ok(res) => {
-            eprintln!("{:?}", res);
+            eprintln!("{:#?}", res);
         },
         Err(err) => { eprintln!("{}", err); }
     }
@@ -84,7 +84,7 @@ async fn add_subdomain(domain_name: &str, sub_domain: &str, record_type: &str, r
 async fn update_subdomain(record_id: &str, sub_domain: &str, record_type: &str, value: &str) {
     match dns.update_domain_record(record_id, sub_domain, record_type, value).await {
         Ok(res) => {
-            eprintln!("{:?}", res);
+            eprintln!("{:#?}", res);
         },
         Err(err) => { eprintln!("{}", err); }
     }
@@ -93,7 +93,7 @@ async fn update_subdomain(record_id: &str, sub_domain: &str, record_type: &str, 
 async fn list_subdomains(domain_name: &str) {
     match dns.query_domain_records(domain_name).await {
         Ok(res) => {
-            eprintln!("{:?}", res);
+            eprintln!("{:#?}", res);
         },
         Err(err) => { eprintln!("{}", err); }
     }
