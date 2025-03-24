@@ -37,17 +37,17 @@ enum Commands {
         #[arg(short, long)]
         record_type: String,
         #[arg(short, long)]
-        record_value: String,
+        value: String,
     },
     Update {
         #[arg(short, long)]
-        record_id: String,
+        id: String,
         #[arg(short, long)]
         sub_domain: String,
         #[arg(short, long)]
         record_type: String,
         #[arg(short, long)]
-        record_value: String,
+        value: String,
     },
     List {
         #[arg(short, long)]
@@ -59,14 +59,14 @@ enum Commands {
 async fn main() {
     let cli = Cli::parse();
     match &cli.command {
-        Some(Commands::Add { domain_name, sub_domain, record_type, record_value }) => {
-            add_subdomain(domain_name, sub_domain, record_type, record_value).await;
+        Some(Commands::Add { domain_name, sub_domain, record_type, value }) => {
+            add_subdomain(domain_name, sub_domain, record_type, value).await;
         },
         Some(Commands::List { domain }) => {
             list_subdomains(&domain).await;
         },
-        Some(Commands::Update { record_id, sub_domain, record_type, record_value }) => {
-            update_subdomain(record_id, sub_domain, record_type, record_value).await;
+        Some(Commands::Update { id, sub_domain, record_type, value }) => {
+            update_subdomain(id, sub_domain, record_type, value).await;
         },
         None => { eprintln!("invalid sub command"); },
     }
