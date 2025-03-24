@@ -17,7 +17,7 @@ jobs:
   goreleaser:
     runs-on: ubuntu-latest
     steps:
-      - run: sudo apt-get install libssl-dev
+      - run: sudo apt-get update && sudo apt-get install -y libssl-dev pkg-config
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
